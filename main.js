@@ -15,7 +15,8 @@ const hide = (el) => {
     el.classList.add("d-none");
 };
 
-buttonSearch.addEventListener("click", () => {
+//event handler
+const eventHandler = () => {
     gallery.innerHTML = ""; //clears gallery
     hide(notFound); // hide not found msg
     hide(resultsFound); // hide found msg
@@ -26,8 +27,18 @@ buttonSearch.addEventListener("click", () => {
         display(notFound); //display not found msg
     } else {
         display(spinner); //show loading spinner
-        loadData(searchText);
+        loadData(searchText); //load data based on search text
     }
+};
+
+searchField.addEventListener("keyup", (res) => {
+    if (res.key === "Enter") {
+        eventHandler();
+    }
+});
+
+buttonSearch.addEventListener("click", () => {
+    eventHandler();
 });
 
 //fetch api data
@@ -55,8 +66,13 @@ const showBooks = (data) => {
             else
                 imgURL = `https://covers.openlibrary.org/b/id/${cover_i}-L.jpg`;
             if (!title) title = "...";
+
             if (!author_name) author_name = "...";
+            else author_name = author_name[0];
+
             if (!publisher) publisher = "...";
+            else publisher = publisher[0];
+
             if (!first_publish_year) first_publish_year = "...";
 
             const bookCard = document.createElement("div");
@@ -66,18 +82,19 @@ const showBooks = (data) => {
                             <img src="${imgURL}" class="card-img-top bg-secondary" height="300" alt="" />
                             <div class="card-body">
                                 <h5 class="card-title text-center">${title}</h5>
-                                <p><span class="fw-bold">Authors:</span> ${author_name[0]}</p>
+                                <p><span class="fw-bold">Author:</span> ${author_name}</p>
                                 <p class="card-text">
-                                    <span class="fw-bold">Publisher:</span> ${publisher[0]}
+                                    <span class="fw-bold">Publisher:</span> ${publisher}
                                     <br>
                                     <span class="fw-bold">First Published:</span> ${first_publish_year}
                                 </p>
                             </div>
+                            <button class="btn btn-primary">Details</button>
                         </div>
             `;
             gallery.appendChild(bookCard);
         });
-        display(resultsFound); //display number of results found
         resultsFound.innerText = `${data.numFound} results found!`;
+        display(resultsFound); //display number of results found
     }
 };
